@@ -1,0 +1,14 @@
+# Large VM artifacts — never commit these (GitHub rejects files > 100 MB)
+*.vdi
+*.vhd
+*.qcow2
+*.iso
+*.img
+*.raw
+
+# QEMU binaries (re-download these separately)
+qemu/
+
+# Screenshots / scratch
+*.png
+*.ppm
