@@ -192,6 +192,40 @@ All five installed and verified running. **The VM now boots straight into Hyprla
 
 XFCE is still installed — log out (Super+Shift+E) and pick it in the greeter's session menu if wanted.
 
+## PART 3 (2026-06-12) — The "rice": fastfetch + zsh + transparent terminal
+
+Goal: replicate the classic `arch + hyprland + swww + pywal` aesthetic (transparent terminal
+with fastfetch over a moody wallpaper, colors generated from the wallpaper).
+
+### Added
+- **fastfetch** — system-info splash, runs automatically when a terminal opens
+- **zsh** (now the default shell for `arch`) + autosuggestions + syntax-highlighting plugins
+- **JetBrainsMono Nerd Font** (`ttf-jetbrains-mono-nerd`)
+- **foot** terminal — transparent (alpha 0.85), nerd font, padded
+- **Wallpaper:** `misty_mountains.jpg` from the nordic-wallpapers repo → `~/Pictures/wall.png`,
+  applied with swww; pywal palette regenerated from it
+- Hyprland: blur + rounding enabled (`decoration { blur { ... } }`)
+
+### Why foot and not kitty
+kitty 0.47's Wayland backend crashes on this VM stack (`wl_surface.attach invalid arguments`,
+even with default config), and its X11 fallback needs XWayland, which the session doesn't start.
+**foot** is Wayland-native and CPU-rendered — ideal for VMs — and does the same transparent look.
+kitty stays installed (Super-key bind switched to foot).
+
+### Files
+| File (in VM) | Purpose |
+|---|---|
+| `/home/arch/.config/foot/foot.ini` | font, padding, `[colors-dark]` alpha 0.85, shell=zsh |
+| `/home/arch/.zshrc` | pywal sequences, prompt, plugins, fastfetch-on-open |
+| `/home/arch/.config/hypr/hyprland.conf` | blur/rounding, Super+Enter → foot |
+| `/home/arch/Pictures/wall.png` | the wallpaper (swww + pywal source) |
+
+### Change the look later (inside the VM)
+```bash
+swww img ~/Pictures/newwall.png   # set wallpaper
+wal -i ~/Pictures/newwall.png -n  # regenerate colors from it
+```
+
 ## Useful things you might want next
 
 - **Create a normal (non-root) user** (recommended for daily use):
