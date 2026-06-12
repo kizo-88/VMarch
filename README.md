@@ -40,3 +40,30 @@ The disk is a **BIOS/MBR** install (GRUB in the MBR) — the VM **must use BIOS 
 
 Boots into an **XFCE graphical desktop** via the LightDM login screen.
 See [`SETUP-LOG.md`](SETUP-LOG.md) for everything that was configured.
+
+## Tutorial: Fixing Network in QEMU
+
+If you boot the system in QEMU and find you have no internet access (e.g. `ping archlinux.org` fails or `pacman` cannot resolve hosts), the built-in system network service may not be fully active or DHCP isn't enabled for the QEMU interface.
+
+Run these steps as `root` to enable a temporary or persistent DHCP connection:
+
+1. **Configure DHCP** for the wired interface:
+   ```bash
+   echo '[Match]
+   Name=en*
+   [Network]
+   DHCP=yes' > /etc/systemd/network/20-wired.network
+   ```
+
+2. **Start systemd network services**:
+   ```bash
+   systemctl start systemd-networkd
+   systemctl start systemd-resolved
+   ln -sf /run/systemd/resolve/stub-resolv.conf /etc/resolv.conf
+   ```
+
+3. **Verify Connection**:
+   ```bash
+   ping -c 3 archlinux.org
+   ```
+   If successful, you can now run `pacman -Syy` and continue installing packages.
