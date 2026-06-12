@@ -250,10 +250,13 @@ VM resources raised (host: i7-10700, 8C/16T, 15.7 GB RAM):
 VBoxManage modifyvm "ArchLinux-VM" --memory 8192 --cpus 8
 ```
 
-- **RAM: 4096 → 8192 MB** (half of host — safe ceiling)
-- **CPUs: 2 → 8** (matches host's physical cores; going past physical cores, e.g. 10,
-  degrades performance because VirtualBox vCPUs compete for real cores)
-- Verified in-guest: `nproc` = 8, `free -h` = 7.7 Gi
+- First bump: 4096 → 8192 MB RAM, 2 → 8 CPUs.
+- Second bump (same day, user request): **8192 → 12288 MB RAM, 8 → 10 CPUs**
+  (`VBoxManage modifyvm "ArchLinux-VM" --memory 12288 --cpus 10`). Verified in-guest:
+  `nproc` = 10, `free -h` = 11 Gi.
+- **This is the ceiling for this host.** 12 GB VM on a 15.7 GB host leaves Windows ~3.7 GB —
+  if the host gets sluggish or pages, dial back to 10240/8. The 10 vCPUs exceed the 8
+  physical cores (SMT threads cover the rest), which trades per-core speed for parallelism.
 - Note: hardware settings can only be changed while the VM is **fully powered off**
   (not saved/paused — VirtualBox locks the config in those states).
 
