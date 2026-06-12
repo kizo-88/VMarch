@@ -154,6 +154,44 @@ powershell -ExecutionPolicy Bypass -File C:\.Developer\VM\run-vm.ps1
 
 ---
 
+## PART 2 (2026-06-12) — Hyprland, swww, pywal, Brave, Chrome
+
+All five installed and verified running. **The VM now boots straight into Hyprland as user `arch` / password `arch`.**
+
+### What was installed
+| Package | Source | Notes |
+|---|---|---|
+| `hyprland` 0.55 | official repo | + xdg-desktop-portal-hyprland, qt5/qt6-wayland |
+| `swww` 0.9.5 | AUR (built from source) | wallpaper daemon |
+| `python-pywal` | official repo | `wal` command |
+| `brave-bin` | AUR | Brave browser |
+| `google-chrome` | AUR | Chrome browser |
+| extras | official repo | kitty, waybar, wofi, mako, grim, slurp, polkit-gnome, yay (AUR helper) |
+
+### Key fixes discovered along the way
+1. **Slow mirror stalled pacman** → replaced `/etc/pacman.d/mirrorlist` with Cloudflare/kernel.org mirrors.
+2. **yay swapped swww for the `awww` fork** → removed it, built genuine `swww` from AUR directly.
+3. **swww compile OOM-killed at 2 GB RAM** → added a permanent 4 GB `/swapfile` + single-job build.
+4. **Hyprland refuses to run as root** → created normal user **`arch` / `arch`** (wheel + sudo); LightDM autologin → Hyprland session.
+5. **Graphics:** enabled VirtualBox **3D acceleration** + bumped VM RAM to **4096 MB**; blacklisted `vboxvideo` (conflicts with `vmwgfx` on VMSVGA).
+6. **pywal needs a colorful image** → plain gradients fail palette extraction; generated plasma-fractal wallpaper at `~/Pictures/wall.png`.
+7. **swww socket** is per-display: use `WAYLAND_DISPLAY=wayland-1` when calling `swww` from outside the session.
+
+### Logins
+| Account | Password | Use |
+|---|---|---|
+| `arch` | `arch` | **default** — autologin into Hyprland, has sudo |
+| `root` | `arch` | console/maintenance |
+
+### Hyprland keybinds (in `~/.config/hypr/hyprland.conf`)
+- **Super+Enter** terminal (kitty) • **Super+D** app launcher (wofi)
+- **Super+B** Brave • **Super+C** Chrome
+- **Super+Q** close window • **Super+F** fullscreen • **Super+Shift+E** exit to login
+- **Super+1/2/3** switch workspace • **Super+Shift+1/2/3** move window to workspace
+- Wallpaper: `swww img <file>` • Colors: `wal -i <file>`
+
+XFCE is still installed — log out (Super+Shift+E) and pick it in the greeter's session menu if wanted.
+
 ## Useful things you might want next
 
 - **Create a normal (non-root) user** (recommended for daily use):
