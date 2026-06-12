@@ -226,6 +226,22 @@ swww img ~/Pictures/newwall.png   # set wallpaper
 wal -i ~/Pictures/newwall.png -n  # regenerate colors from it
 ```
 
+## PART 4 (2026-06-12) — Taskbar, dock, and app drawer
+
+### Added
+- **Taskbar (top):** waybar rethemed — floating rounded "pill" modules, pywal colors
+  (`@import` of `~/.cache/wal/colors-waybar.css`): workspaces, window title, clock,
+  CPU, RAM, network, system tray. Config: `~/.config/waybar/{config.jsonc,style.css}`.
+- **Dock (bottom):** `nwg-dock-hyprland` with real app icons — pinned: foot, Thunar,
+  Brave, Chrome (pins in `~/.cache/nwg-dock-pinned`) + a launcher-grid button + running apps.
+- **App drawer:** `nwg-drawer` — fullscreen searchable app grid with categories
+  ("apps appear on the desktop"). Open with **Super+A**, the dock grid button, or Esc to close.
+- **Papirus-Dark icon theme** (`~/.config/gtk-3.0/settings.ini`) for proper app icons.
+
+### New keybinds
+- **Super+A** → app drawer • **Super+E** → Thunar file manager
+- Both autostart with the session (`exec-once` in hyprland.conf).
+
 ## Useful things you might want next
 
 - **Create a normal (non-root) user** (recommended for daily use):
