@@ -242,6 +242,21 @@ wal -i ~/Pictures/newwall.png -n  # regenerate colors from it
 - **Super+A** → app drawer • **Super+E** → Thunar file manager
 - Both autostart with the session (`exec-once` in hyprland.conf).
 
+## PART 5 (2026-06-12) — Hardware upgrade
+
+VM resources raised (host: i7-10700, 8C/16T, 15.7 GB RAM):
+
+```powershell
+VBoxManage modifyvm "ArchLinux-VM" --memory 8192 --cpus 8
+```
+
+- **RAM: 4096 → 8192 MB** (half of host — safe ceiling)
+- **CPUs: 2 → 8** (matches host's physical cores; going past physical cores, e.g. 10,
+  degrades performance because VirtualBox vCPUs compete for real cores)
+- Verified in-guest: `nproc` = 8, `free -h` = 7.7 Gi
+- Note: hardware settings can only be changed while the VM is **fully powered off**
+  (not saved/paused — VirtualBox locks the config in those states).
+
 ## Useful things you might want next
 
 - **Create a normal (non-root) user** (recommended for daily use):
