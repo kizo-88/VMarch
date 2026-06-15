@@ -12,6 +12,8 @@ in both **VirtualBox (Oracle)** and **QEMU**.
 | File | Purpose |
 |------|---------|
 | [`SETUP-LOG.md`](SETUP-LOG.md) | Full step-by-step log of how the VM was set up (boot fix, password reset, networking, XFCE desktop). |
+| [`NMAP-TUTORIAL.md`](NMAP-TUTORIAL.md) | Full nmap tutorial — install, common scans, timing flags, saving output. |
+| `nmap-guide.sh` | Interactive nmap helper script — run inside the Arch VM. |
 | `setup-vbox.ps1` | Create/repair the VirtualBox VM `ArchLinux-VM` (BIOS firmware, attach disk). |
 | `run-vm.ps1` | Boot the installed disk in QEMU. |
 | `download.ps1` | Download the latest Arch Linux ISO. |
