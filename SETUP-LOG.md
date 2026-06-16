@@ -260,6 +260,46 @@ VBoxManage modifyvm "ArchLinux-VM" --memory 8192 --cpus 8
 - Note: hardware settings can only be changed while the VM is **fully powered off**
   (not saved/paused — VirtualBox locks the config in those states).
 
+## PART 6 (2026-06-16) — Cybersecurity toolkit + PDF tutorial
+
+> **For authorized testing / learning only.** Only test systems you own or have written
+> permission to test. Build a lab (Metasploitable, DVWA, Juice Shop, TryHackMe/HTB).
+
+### Disk grown first
+The 20 GB disk had only ~5 GB free, so it was expanded:
+```powershell
+VBoxManage modifymedium disk "C:\.Developer\VM\arch.vdi" --resize 40960   # VM off
+```
+then inside the VM (partition 2 is the last, online-growable):
+```bash
+pacman -S cloud-guest-utils
+growpart /dev/sda 2 && resize2fs /dev/sda2     # -> 39 GB, ~24 GB free
+```
+(parted's scripted `resizepart` refused on the mounted root — `growpart` is the right tool.)
+
+### Repos enabled
+- **BlackArch** (~5,000 security pkgs) via the official `strap.sh`, plus **multilib**.
+  See `enable-repos.sh`.
+
+### Toolkit installed (`install-sectools.sh`, then `retry-sectools.sh`, `fix3.sh`)
+~88 security tools across recon, web, exploitation, passwords, wireless, sniffing,
+RE/forensics, plus **SecLists wordlists (1.9 GB)** in `/usr/share/seclists`.
+148 explicitly-installed packages total; ~14 GB free remaining.
+
+**Gotchas hit:**
+1. Per-package `pacman -S` (no `-y`) drifted from the mirror → **404 on deps** (capstone,
+   openmpi, wireshark…). Fix: `pacman -Syyu` (full upgrade) then reinstall — recovered
+   metasploit, john, hydra, radare2, wireshark, etc.
+2. Three Python tools clashed with Arch's **Python 3.14**: `sqlmap` (git clone →
+   `/opt/sqlmap` + symlink), `recon-ng` (pipx from git), `mitmproxy` (pacman, worked after
+   the full upgrade).
+3. Install per-package in a loop so one bad name skips instead of aborting the transaction.
+
+### PDF tutorial
+`make-pdf.py` (reportlab) builds **Cybersecurity-Toolkit-Tutorial.pdf** — legal/ethics,
+VM setup, and every category with example commands. Generated in the VM (host has no
+Python) and copied to the host with `VBoxManage guestcontrol ... copyfrom`.
+
 ## Useful things you might want next
 
 - **Create a normal (non-root) user** (recommended for daily use):
