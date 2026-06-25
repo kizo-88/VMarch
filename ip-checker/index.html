@@ -283,24 +283,29 @@
 
     async function fetchIP() {
       try {
-        const ipRes  = await fetch('https://api.ipify.org?format=json');
-        const ipData = await ipRes.json();
-        userIP = ipData.ip;
+        // ipwho.is — single request, returns IP + full geo, CORS-friendly from file://
+        const res  = await fetch('https://ipwho.is/');
+        const data = await res.json();
+
+        if (!data.success) throw new Error('API error');
+
+        userIP = data.ip;
 
         document.getElementById('loader').style.display = 'none';
         const ipEl = document.getElementById('ip-address');
         ipEl.style.display = 'inline';
         ipEl.textContent = userIP;
 
-        const geoRes  = await fetch('https://ipapi.co/' + userIP + '/json/');
-        const geo     = await geoRes.json();
+        const flag = data.country_code
+          ? String.fromCodePoint(...[...data.country_code].map(c => 0x1F1E6 - 65 + c.charCodeAt(0)))
+          : '';
 
-        set('country',  (geo.country_name || '—') + ' ' + (geo.country_code ? '(' + geo.country_code + ')' : ''));
-        set('city',     geo.city || geo.region || '—');
-        set('isp',      geo.org ? geo.org.replace(/^AS\d+\s/, '') : '—');
-        set('timezone', geo.timezone || '—');
-        set('ipv6',     geo.version || 'IPv4');
-        set('type',     (geo.org || '').toLowerCase().includes('vpn') ? '🛡️ VPN / Proxy' : '🏠 Residential');
+        set('country',  flag + ' ' + (data.country || '—') + ' (' + (data.country_code || '—') + ')');
+        set('city',     data.city || data.region || '—');
+        set('isp',      data.connection && data.connection.isp ? data.connection.isp : '—');
+        set('timezone', data.timezone && data.timezone.id ? data.timezone.id : '—');
+        set('ipv6',     data.type || 'IPv4');
+        set('type',     data.is_eu ? '🇪🇺 EU Network' : data.connection && (data.connection.isp || '').toLowerCase().includes('vpn') ? '🛡️ VPN / Proxy' : '🏠 Residential');
       } catch (e) {
         document.getElementById('loader').style.display = 'none';
         const ipEl = document.getElementById('ip-address');
