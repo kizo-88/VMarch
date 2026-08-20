@@ -12,3 +12,11 @@ qemu/
 # Screenshots / scratch
 *.png
 *.ppm
+
+# Generated output from the dual-boot helper scripts (machine-specific, re-runnable)
+preflight-out.txt
+querymax-out.txt
+maxshrink-out.txt
+shrink-out.txt
+unpool-out.txt
+writeiso-out.txt

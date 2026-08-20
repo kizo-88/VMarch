@@ -1,0 +1,9 @@
+# The Arch install scripts run on Linux. CRLF makes them fail with
+# "bad interpreter: /bin/bash^M", so pin them to LF regardless of core.autocrlf.
+*.sh text eol=lf
+
+# PowerShell stays CRLF (Windows-only).
+*.ps1 text eol=crlf
+
+# Docs are read on both sides; LF is safe everywhere.
+*.md text eol=lf
