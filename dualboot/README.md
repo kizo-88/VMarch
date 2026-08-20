@@ -1,5 +1,12 @@
 # Dual-boot Arch alongside Windows 11 — Dell Precision 3640
 
+> **Which machine:** these scripts are for the **Dell Precision 3640 Tower**
+> (SK hynix 953.9 GB NVMe, Intel RST, 150 MB ESP at `p1`). They are **not** for the
+> MSI GF63 Thin 10SC — that has a different layout (ESP at `p2`, 300 MB) and its own
+> scripts on the `dualboot-setup` branch under `arch/`. Running these on the GF63 is
+> safe but useless: `01-install.sh` asserts `p1` is vfat with `EFI/Microsoft` and will
+> abort.
+
 Scripts for the bare-metal install. Full runbook with the firmware steps lives in the
 artifact; this directory is only the part that runs inside the Arch installer.
 
@@ -63,7 +70,7 @@ arch-chroot /mnt
 Override the defaults with environment variables if you want:
 
 ```bash
-TZ=Europe/Dublin LOCALE=en_IE.UTF-8 HOSTNAME=arch USERNAME=kizo /root/02-configure.sh
+ARCH_TZ=Europe/Dublin ARCH_LOCALE=en_IE.UTF-8 ARCH_HOSTNAME=arch ARCH_USER=kizo /root/02-configure.sh
 ```
 
 `02-configure.sh` sets time/locale/host, creates your user, installs GRUB, enables

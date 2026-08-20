@@ -2,29 +2,32 @@
 # Run INSIDE arch-chroot /mnt  (second half of the install).
 # Configures locale/time/user, installs GRUB, and makes it find Windows.
 set -euo pipefail
+# These are deliberately ARCH_-prefixed. bash sets HOSTNAME itself, so a plain
+# ${HOSTNAME:-precision} silently resolves to the live USB name ("archiso") and the
+# default never applies. USERNAME/TZ can be set by the environment for the same reason.
 
-TZ=${TZ:-Europe/London}
-LOCALE=${LOCALE:-en_GB.UTF-8}
-HOSTNAME=${HOSTNAME:-precision}
-USERNAME=${USERNAME:-kizo}
+ARCH_TZ=${ARCH_TZ:-Europe/London}
+ARCH_LOCALE=${ARCH_LOCALE:-en_GB.UTF-8}
+ARCH_HOSTNAME=${ARCH_HOSTNAME:-precision}
+ARCH_USER=${ARCH_USER:-kizo}
 
 grn(){ printf '\033[1;32m%s\033[0m\n' "$*"; }
 red(){ printf '\033[1;31m%s\033[0m\n' "$*"; }
 ylw(){ printf '\033[1;33m%s\033[0m\n' "$*"; }
 
 echo "== Time and locale =="
-ln -sf "/usr/share/zoneinfo/$TZ" /etc/localtime
+ln -sf "/usr/share/zoneinfo/$ARCH_TZ" /etc/localtime
 hwclock --systohc
-sed -i "s/^#\(${LOCALE//./\.}\)/\1/" /etc/locale.gen
+sed -i "s/^#\(${ARCH_LOCALE//./\.}\)/\1/" /etc/locale.gen
 locale-gen
-echo "LANG=$LOCALE" > /etc/locale.conf
+echo "LANG=$ARCH_LOCALE" > /etc/locale.conf
 
 echo "== Host and network =="
-echo "$HOSTNAME" > /etc/hostname
+echo "$ARCH_HOSTNAME" > /etc/hostname
 cat > /etc/hosts <<HOSTS
 127.0.0.1   localhost
 ::1         localhost
-127.0.1.1   $HOSTNAME.localdomain $HOSTNAME
+127.0.1.1   $ARCH_HOSTNAME.localdomain $ARCH_HOSTNAME
 HOSTS
 systemctl enable NetworkManager
 
@@ -52,8 +55,8 @@ else
 fi
 
 echo "== Accounts =="
-if ! id "$USERNAME" &>/dev/null; then
-  useradd -m -G wheel "$USERNAME"
+if ! id "$ARCH_USER" &>/dev/null; then
+  useradd -m -G wheel "$ARCH_USER"
 fi
 # A drop-in is safer than editing /etc/sudoers in place; validate before keeping it.
 echo '%wheel ALL=(ALL:ALL) ALL' > /etc/sudoers.d/10-wheel
@@ -65,7 +68,7 @@ fi
 
 echo
 echo "Set the root password:"; passwd
-echo "Set the password for $USERNAME:"; passwd "$USERNAME"
+echo "Set the password for $ARCH_USER:"; passwd "$ARCH_USER"
 
 echo
 grn "Configuration done."
